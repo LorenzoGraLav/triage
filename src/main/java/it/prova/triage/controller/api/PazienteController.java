@@ -2,6 +2,7 @@ package it.prova.triage.controller.api;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.prova.triage.controller.api.exception.EliminazionePazienteException;
 import it.prova.triage.dto.PazienteDTO;
+import it.prova.triage.model.StatoPaziente;
 import it.prova.triage.service.paziente.PazienteService;
 
 @RestController
@@ -44,14 +47,17 @@ public class PazienteController {
 	}
 	@PutMapping("/{id}")
 	public PazienteDTO update(@Valid @RequestBody PazienteDTO pazienteInput, @PathVariable(required = true) Long id) {
-		if (pazienteInput.getId() != null)
-			throw new RuntimeException();
+		
 		return pazienteService.aggiornaPaziente(pazienteInput);
 	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable(required = true) Long id) {
+		PazienteDTO pazienteDaEliminare = new PazienteDTO();
+		if(pazienteDaEliminare.getStatoPaziente() != StatoPaziente.DIMESSO) {
+			throw new EliminazionePazienteException("Non posso eliminare un paziente se prima non è dimesso");
+		}
 		pazienteService.eliminaPaziente(id);
 	}
 }

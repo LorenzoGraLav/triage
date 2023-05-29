@@ -46,6 +46,7 @@ public class PazienteServiceImpl implements PazienteService {
 	@Override
 	@Transactional
 	public void eliminaPaziente(Long id) {
+		
 		repository.deleteById(id);		
 	}
 

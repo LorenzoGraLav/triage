@@ -40,7 +40,7 @@ public class PazienteDTO {
 	}
 	
 	public static PazienteDTO buildPazienteDTOFromModel(Paziente pazienteModel) {
-		PazienteDTO result = PazienteDTO.builder().id(pazienteModel.getId()).nome(pazienteModel.getNome()).codiceFiscale(pazienteModel.getCognome()).codiceFiscale(pazienteModel.getCodiceFiscale()).statoPaziente(pazienteModel.getStatoPaziente()).build();
+		PazienteDTO result = PazienteDTO.builder().id(pazienteModel.getId()).nome(pazienteModel.getNome()).cognome(pazienteModel.getCognome()).codiceFiscale(pazienteModel.getCodiceFiscale()).statoPaziente(pazienteModel.getStatoPaziente()).build();
 		return result;
 	}
 	
