@@ -2,17 +2,15 @@ package it.prova.triage;
 
 import java.time.LocalDate;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import it.prova.triage.dto.PazienteDTO;
-import it.prova.triage.model.Paziente;
 import it.prova.triage.model.Ruolo;
 import it.prova.triage.model.Utente;
-import it.prova.triage.service.paziente.PazienteService;
 import it.prova.triage.service.ruolo.RuoloService;
 import it.prova.triage.service.utente.UtenteService;
 
@@ -24,12 +22,8 @@ public class TriageApplication implements CommandLineRunner {
 	@Autowired
 	private UtenteService utenteServiceInstance;
 
-	@Autowired
-	private PazienteService pazienteService;
-
 	
-	PazienteDTO paziente;
-
+	
 	public static void main(String[] args) {
 		SpringApplication.run(TriageApplication.class, args);
 	}
@@ -66,15 +60,7 @@ public class TriageApplication implements CommandLineRunner {
 			utenteServiceInstance.changeUserAbilitation(classicUser.getId());
 		}
 
-		Paziente paziente1 = Paziente.builder().nome("Giacomo").cognome("Bonarroti").codiceFiscale("GBM567UIO9")
-				.build();
-		Paziente paziente2 = Paziente.builder().nome("Luca").cognome("Genovese").codiceFiscale("LGM89JKO9").build();
-		Paziente paziente3 = Paziente.builder().nome("Marco").cognome("Gentili").codiceFiscale("MGJ345KOP08").build();
-
-		pazienteService.inserisciPaziente(PazienteDTO.buildPazienteDTOFromModel(paziente1));
-		pazienteService.inserisciPaziente(PazienteDTO.buildPazienteDTOFromModel(paziente2));
-		pazienteService.inserisciPaziente(PazienteDTO.buildPazienteDTOFromModel(paziente3));
-
+	
 
 	}
 }

@@ -36,5 +36,7 @@ public class Paziente {
 	private LocalDate registrazione;
 	@Column(name = "statopaziente")
 	private StatoPaziente statoPaziente;
+	@Column(name = "codiceDottore")
+	private String codiceDottore;
 	
 }

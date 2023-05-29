@@ -33,6 +33,12 @@ public class UtenteController {
 	@Autowired
 	private UtenteService utenteService;
 
+	// questa mi serve solo per capire se solo ADMIN vi ha accesso
+	@GetMapping("/testSoloAdmin")
+	public String test() {
+		return "OK";
+	}
+
 	@GetMapping(value = "/userInfo")
 	public ResponseEntity<UtenteInfoJWTResponseDTO> getUserInfo() {
 
@@ -54,55 +60,58 @@ public class UtenteController {
 		return UtenteDTO.createUtenteDTOListFromModelList(utenteService.listAllUtenti());
 	}
 
-	
+	@PostMapping
+	public void createNew(@Valid @RequestBody UtenteDTO utenteInput) {
+		if (utenteInput.getId() != null)
+			throw new RuntimeException("Non è ammesso fornire un id per la creazione");
+		utenteService.inserisciNuovo(utenteInput.buildUtenteModel(true));
+	}
+
 	@GetMapping("/{id}")
 	public UtenteDTO findById(@PathVariable(value = "id", required = true) long id) {
-
 		Utente utente = utenteService.caricaSingoloUtenteConRuoli(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		if (utente == null)
-			throw new RuntimeException("");
+			throw new RuntimeException("Utente not found con id: " + id);
+		// aggiungere condizione utente
 
 		return UtenteDTO.buildUtenteDTOFromModel(utente);
-
 	}
 
-	
 	@PutMapping("/{id}")
-	public UtenteDTO update(@Valid @RequestBody UtenteDTO utenteInput,
-			@PathVariable(required = true) Long id) {
-
+	public void update(@Valid @RequestBody UtenteDTO utenteInput, @PathVariable(required = true) Long id) {
 		Utente utente = utenteService.caricaSingoloUtente(id);
 
 		if (utente == null)
-			throw new RuntimeException("");
+			throw new RuntimeException("Utente not found con id: " + id);
 
 		utenteInput.setId(id);
-		Utente utenteAggiornato = utenteService.aggiorna(utenteInput.buildUtenteModel(false));
-		return UtenteDTO.buildUtenteDTOFromModel(utenteAggiornato);
-
+		utenteService.aggiorna(utenteInput.buildUtenteModel(true));
 	}
 
-	
-	@DeleteMapping("/private/{id}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable(required = true) Long id) {
-
-		Utente utente = utenteService.caricaSingoloUtente(id);
-
-		if (utente == null)
-			throw new RuntimeException("non esiste nessun id");
-		
+		if (utenteService.caricaSingoloUtente(id) == null)
+			throw new RuntimeException("Utente not found con id: " + id);
 		utenteService.rimuovi(id);
-
 	}
-	
 
-	
-	@PostMapping("/create")
-	public UtenteDTO creaUtente(@Valid @RequestBody UtenteDTO utenteInput) {
-		return  UtenteDTO.buildUtenteDTOFromModel(utenteService.inserisciNuovo(utenteInput.buildUtenteModel(true)));
+
+	@PutMapping("/cambiaStato/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void changeUserAbilitation(@PathVariable(value = "id", required = true) long id) {
+		utenteService.changeUserAbilitation(id);
 	}
-	
+
+	@PutMapping("/disabilita/{id}")
+	public void disabilita(@PathVariable(required = true) Long id) {
+		Utente utente = utenteService.caricaSingoloUtente(id);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		if (utente == null)
+			throw new RuntimeException("Utente not found con id: " + id);
+		utenteService.disabilityUserAbilitation(id);
+	}
 	
 }
